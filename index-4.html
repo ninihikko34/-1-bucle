@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>-1 BUCLE</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; background: #000; color: #fff; font-family: Georgia, "Times New Roman", serif; }
+    body { overflow: hidden; }
+    .screen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #000; transition: opacity 1.4s ease; }
+    #intro { z-index: 10; }
+    #intro video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+    #skip, #sound {
+      position: absolute;
+      bottom: 20px;
+      border: 1px solid rgba(255,255,255,.45);
+      background: rgba(0,0,0,.65);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      z-index: 2;
+    }
+    #skip { right: 20px; }
+    #sound { left: 20px; }
+    #skip:hover, #sound:hover { background: rgba(255,255,255,.12); }
+    #sound.hidden { display: none; }
+
+    #titleScreen { z-index: 5; opacity: 0; pointer-events: none; flex-direction: column; text-align: center; background: radial-gradient(circle at center, #171022 0%, #050409 48%, #000 100%); }
+    #titleScreen.show { opacity: 1; pointer-events: auto; }
+    .title { font-size: clamp(48px, 10vw, 120px); letter-spacing: .16em; margin-left: .16em; text-shadow: 0 0 22px rgba(255,255,255,.25); }
+    .subtitle { margin-top: 8px; color: #aaa; font-size: clamp(14px, 2vw, 20px); letter-spacing: .35em; text-transform: uppercase; }
+    .enter { margin-top: 42px; padding: 13px 32px; color: #fff; background: transparent; border: 1px solid #777; cursor: pointer; letter-spacing: .2em; transition: .3s; }
+    .enter:hover { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,.18); }
+    #home { position: fixed; inset: 0; z-index: 1; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 1s ease; background: linear-gradient(#08070c, #020204); }
+    #home.show { opacity: 1; pointer-events: auto; }
+    header { min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 20px; background: radial-gradient(circle, #17101e 0%, #08070c 55%, #020204 100%); }
+    header h1 { font-size: clamp(44px, 8vw, 92px); letter-spacing: .12em; margin: 0; }
+    header p { max-width: 680px; color: #bdbdbd; line-height: 1.7; }
+    nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 25px; }
+    nav a { color: #fff; text-decoration: none; border: 1px solid #444; padding: 11px 18px; }
+    nav a:hover { border-color: #aaa; }
+    section { max-width: 900px; margin: auto; padding: 70px 22px; }
+    section h2 { font-size: 30px; letter-spacing: .08em; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap: 15px; }
+    .card { border: 1px solid #29272e; padding: 24px; background: rgba(255,255,255,.025); min-height: 130px; }
+    .pdf-container { width: 100%; margin-top: 28px; }
+.pdf-viewer { display: block; width: 100%; height: 78vh; min-height: 600px; border: 1px solid #29272e; background: #111; }
+.pdf-fallback { margin-top: 14px; color: #aaa; line-height: 1.6; }
+.pdf-link { display: inline-block; margin-top: 8px; color: #fff; text-decoration: none; border: 1px solid #555; padding: 10px 16px; }
+.pdf-link:hover { border-color: #fff; }
+
+footer { text-align: center; padding: 40px 20px 70px; color: #666; }
+    @media (max-width: 600px) {
+      #intro video { object-fit: contain; }
+      .title { letter-spacing: .08em; margin-left: .08em; }
+      .subtitle { letter-spacing: .2em; }
+      #skip, #sound { bottom: 14px; }
+      #skip { right: 14px; }
+      #sound { left: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="intro" class="screen">
+    <video id="teaser" autoplay muted playsinline>
+      <source src="teaser.mp4" type="video/mp4">
+      Tu navegador no puede reproducir este video.
+    </video>
+
+    <button id="sound" aria-label="Activar sonido">🔊 ACTIVAR SONIDO</button>
+    <button id="skip">Saltar</button>
+  </div>
+
+  <div id="titleScreen" class="screen">
+    <div class="title">-1 BUCLE</div>
+    <div class="subtitle">Una historia atrapada en el ciclo</div>
+    <button class="enter" id="enter">ENTRAR</button>
+  </div>
+
+  <main id="home">
+    <header>
+      <h1>-1 BUCLE</h1>
+      <p>Una historia de ciclos, universos y acontecimientos que quizá nunca debieron repetirse.</p>
+      <nav>
+        <a href="#historia">Historia</a>
+        <a href="#personajes">Personajes</a>
+        <a href="#universo">Universo</a>
+        <a href="#galeria">Galería</a>
+        <a href="comic.html">Cómic</a>
+      </nav>
+    </header>
+
+    <section id="historia">
+      <h2>📖 Historia</h2>
+      <div class="pdf-container">
+        <iframe class="pdf-viewer" src="bucle.pdf#view=FitH" title="Historia -1 BUCLE">
+          Tu navegador no puede mostrar el PDF directamente.
+        </iframe>
+        <div class="pdf-fallback">
+          Si el visor no aparece en tu celular, puedes abrir la historia directamente:<br>
+          <a class="pdf-link" href="bucle.pdf" target="_blank" rel="noopener">📖 ABRIR HISTORIA EN PDF</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="personajes">
+      <h2>👤 Personajes</h2>
+      <div class="cards">
+        <div class="card"><strong>Personaje 01</strong><br><br>Próximamente...</div>
+        <div class="card"><strong>Personaje 02</strong><br><br>Próximamente...</div>
+        <div class="card"><strong>Personaje 03</strong><br><br>Próximamente...</div>
+      </div>
+    </section>
+
+    <section id="universo">
+      <h2>🌌 Universo</h2>
+      <p>Una sección para explicar el Bucle, los universos y el lore sin revelar demasiado.</p>
+    </section>
+
+    <section id="galeria">
+      <h2>🖼️ Galería</h2>
+      <p>Aquí iremos colocando tus ilustraciones y arte promocional.</p>
+    </section>
+
+    <section id="comic">
+      <h2>📚 Cómic</h2>
+      <p>Lee el cómic de <strong>-1 BUCLE</strong> en una página independiente.</p>
+      <a class="pdf-link" href="comic.html">📖 ABRIR CÓMIC</a>
+    </section>
+
+    <footer>© -1 BUCLE · Página oficial del proyecto</footer>
+  </main>
+
+  <script>
+    const intro = document.getElementById("intro");
+    const titleScreen = document.getElementById("titleScreen");
+    const home = document.getElementById("home");
+    const video = document.getElementById("teaser");
+    const sound = document.getElementById("sound");
+
+    sound.addEventListener("click", async () => {
+      video.muted = false;
+      video.volume = 1;
+      try {
+        await video.play();
+        sound.classList.add("hidden");
+      } catch (error) {
+        video.controls = true;
+        sound.textContent = "▶️ REPRODUCIR CON SONIDO";
+      }
+    });
+
+    function finishIntro() {
+      // Detener COMPLETAMENTE el video al saltar o al terminar.
+      // Además de pausarlo, eliminamos su fuente para impedir que el audio
+      // siga reproduciéndose mientras la pantalla de introducción desaparece.
+      video.pause();
+      video.muted = true;
+      video.volume = 0;
+      video.removeAttribute("src");
+      const source = video.querySelector("source");
+      if (source) source.removeAttribute("src");
+      video.load();
+      document.getElementById("sound").classList.add("hidden");
+
+      intro.style.opacity = "0";
+      setTimeout(() => {
+        intro.style.display = "none";
+        titleScreen.classList.add("show");
+      }, 1200);
+    }
+
+    video.addEventListener("ended", finishIntro);
+    document.getElementById("skip").addEventListener("click", finishIntro);
+
+    document.getElementById("enter").addEventListener("click", () => {
+      titleScreen.classList.remove("show");
+      setTimeout(() => {
+        titleScreen.style.display = "none";
+        home.classList.add("show");
+        document.body.style.overflow = "auto";
+      }, 900);
+    });
+  </script>
+</body>
+</html>
