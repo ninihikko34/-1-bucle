@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000">
+  <title>-1 BUCLE</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #000;
+      color: #fff;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    body { overflow: hidden; }
+
+    /* =========================
+       INTRO / VIDEO
+       ========================= */
+    #intro {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity .8s ease, visibility .8s ease;
+    }
+
+    #intro.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    #teaser {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .intro-button {
+      position: absolute;
+      bottom: 20px;
+      z-index: 101;
+      padding: 11px 17px;
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 4px;
+      background: rgba(0,0,0,.72);
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .intro-button:hover,
+    .intro-button:focus {
+      background: rgba(255,255,255,.12);
+      border-color: #fff;
+      outline: none;
+    }
+
+    #sound { left: 20px; }
+    #skip { right: 20px; }
+
+    /* =========================
+       TITLE
+       ========================= */
+    #titleScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+      text-align: center;
+      background: radial-gradient(circle at center, #171022 0%, #050409 48%, #000 100%);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .8s ease, visibility .8s ease;
+    }
+
+    #titleScreen.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .title {
+      font-size: clamp(48px, 10vw, 120px);
+      letter-spacing: .16em;
+      margin-left: .16em;
+      text-shadow: 0 0 22px rgba(255,255,255,.25);
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: #aaa;
+      font-size: clamp(13px, 2vw, 20px);
+      letter-spacing: .3em;
+      text-transform: uppercase;
+    }
+
+    .enter {
+      margin-top: 42px;
+      padding: 13px 32px;
+      border: 1px solid #777;
+      background: transparent;
+      color: #fff;
+      font-family: inherit;
+      cursor: pointer;
+      letter-spacing: .2em;
+    }
+
+    .enter:hover,
+    .enter:focus {
+      border-color: #fff;
+      box-shadow: 0 0 20px rgba(255,255,255,.18);
+      outline: none;
+    }
+
+    /* =========================
+       HOME
+       ========================= */
+    #home {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow-y: auto;
+      background: linear-gradient(#08070c, #020204);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .8s ease, visibility .8s ease;
+    }
+
+    #home.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    header {
+      min-height: 55vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+      background: radial-gradient(circle, #17101e 0%, #08070c 55%, #020204 100%);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(44px, 8vw, 92px);
+      letter-spacing: .12em;
+    }
+
+    header p {
+      max-width: 680px;
+      color: #bdbdbd;
+      line-height: 1.7;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    nav a,
+    .action-link {
+      display: inline-block;
+      padding: 11px 18px;
+      border: 1px solid #444;
+      color: #fff;
+      text-decoration: none;
+      transition: .2s ease;
+    }
+
+    nav a:hover,
+    .action-link:hover {
+      border-color: #aaa;
+      background: rgba(255,255,255,.04);
+    }
+
+    section {
+      max-width: 900px;
+      margin: auto;
+      padding: 70px 22px;
+    }
+
+    section h2 {
+      margin-top: 0;
+      font-size: 30px;
+      letter-spacing: .08em;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 15px;
+    }
+
+    .card {
+      min-height: 130px;
+      padding: 24px;
+      border: 1px solid #29272e;
+      background: rgba(255,255,255,.025);
+    }
+
+    /* =========================
+       PDF / HISTORIA
+       ========================= */
+    .pdf-container {
+      width: 100%;
+      margin-top: 25px;
+    }
+
+    .pdf-viewer {
+      display: block;
+      width: 100%;
+      height: 78vh;
+      min-height: 520px;
+      border: 1px solid #29272e;
+      background: #111;
+    }
+
+    .pdf-fallback {
+      margin-top: 14px;
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    .action-link {
+      margin-top: 8px;
+    }
+
+    /* =========================
+       COMIC LINK
+       ========================= */
+    .comic-box {
+      padding: 25px;
+      border: 1px solid #29272e;
+      background: rgba(255,255,255,.025);
+    }
+
+    footer {
+      padding: 40px 20px 70px;
+      color: #666;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .intro-button {
+        bottom: 14px;
+      }
+
+      #sound { left: 14px; }
+      #skip { right: 14px; }
+
+      .title {
+        letter-spacing: .08em;
+        margin-left: .08em;
+      }
+
+      .subtitle {
+        letter-spacing: .16em;
+      }
+
+      .pdf-viewer {
+        height: 70vh;
+        min-height: 460px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- =========================
+       INTRO
+       ========================= -->
+  <div id="intro" aria-label="Introducción">
+    <video id="teaser" autoplay muted playsinline preload="auto">
+      <source src="./teaser.mp4" type="video/mp4">
+      Tu navegador no puede reproducir este video.
+    </video>
+
+    <button id="sound" class="intro-button" type="button">
+      🔊 ACTIVAR SONIDO
+    </button>
+
+    <button id="skip" class="intro-button" type="button">
+      Saltar
+    </button>
+  </div>
+
+  <!-- =========================
+       TITLE
+       ========================= -->
+  <div id="titleScreen" aria-hidden="true">
+    <div class="title">-1 BUCLE</div>
+    <div class="subtitle">Una historia atrapada en el ciclo</div>
+    <button id="enter" class="enter" type="button">ENTRAR</button>
+  </div>
+
+  <!-- =========================
+       HOME
+       ========================= -->
+  <main id="home">
+    <header>
+      <h1>-1 BUCLE</h1>
+      <p>
+        Una historia de ciclos, universos y acontecimientos que quizá nunca debieron repetirse.
+      </p>
+
+      <nav aria-label="Navegación principal">
+        <a href="#historia">Historia</a>
+        <a href="#personajes">Personajes</a>
+        <a href="#universo">Universo</a>
+        <a href="#galeria">Galería</a>
+        <a href="./comic.html">📚 Cómic</a>
+      </nav>
+    </header>
+
+    <section id="historia">
+      <h2>📖 Historia</h2>
+      <p>Lee aquí el PDF de <strong>-1 BUCLE</strong>.</p>
+
+      <div class="pdf-container">
+        <iframe
+          class="pdf-viewer"
+          src="./bucle.pdf#view=FitH"
+          title="Historia -1 BUCLE">
+          Tu navegador no puede mostrar el PDF directamente.
+        </iframe>
+
+        <div class="pdf-fallback">
+          Si el visor no aparece correctamente en tu celular, abre el archivo directamente:<br>
+          <a class="action-link" href="./bucle.pdf" target="_blank" rel="noopener">
+            📖 ABRIR HISTORIA EN PDF
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="personajes">
+      <h2>👤 Personajes</h2>
+      <div class="cards">
+        <div class="card"><strong>Personaje 01</strong><br><br>Próximamente...</div>
+        <div class="card"><strong>Personaje 02</strong><br><br>Próximamente...</div>
+        <div class="card"><strong>Personaje 03</strong><br><br>Próximamente...</div>
+      </div>
+    </section>
+
+    <section id="universo">
+      <h2>🌌 Universo</h2>
+      <p>
+        Una sección para explicar el Bucle, los universos y el lore sin revelar demasiado.
+      </p>
+    </section>
+
+    <section id="galeria">
+      <h2>🖼️ Galería</h2>
+      <p>Aquí iremos colocando tus ilustraciones y arte promocional.</p>
+    </section>
+
+    <!-- El cómic permanece como página independiente -->
+    <section id="comic">
+      <h2>📚 Cómic</h2>
+      <div class="comic-box">
+        <p>
+          El cómic se mantiene separado de la historia en PDF.
+        </p>
+        <a class="action-link" href="./comic.html">📚 ABRIR CÓMIC</a>
+      </div>
+    </section>
+
+    <footer>© -1 BUCLE · Página oficial del proyecto</footer>
+  </main>
+
+  <script>
+    const intro = document.getElementById("intro");
+    const titleScreen = document.getElementById("titleScreen");
+    const home = document.getElementById("home");
+    const video = document.getElementById("teaser");
+    const soundButton = document.getElementById("sound");
+    const skipButton = document.getElementById("skip");
+    const enterButton = document.getElementById("enter");
+
+    let introFinished = false;
+
+    /* Activar sonido */
+    soundButton.addEventListener("click", async function () {
+      if (introFinished) return;
+
+      video.muted = false;
+      video.volume = 1;
+
+      try {
+        await video.play();
+        soundButton.style.display = "none";
+      } catch (error) {
+        video.controls = true;
+        soundButton.textContent = "▶️ REPRODUCIR CON SONIDO";
+      }
+    });
+
+    /*
+      Cierra la introducción y DETIENE COMPLETAMENTE el video.
+      El elemento <video> se elimina del DOM para evitar que el audio
+      pueda continuar reproduciéndose en segundo plano en el celular.
+    */
+    function finishIntro() {
+      if (introFinished) return;
+      introFinished = true;
+
+      try {
+        video.pause();
+        video.muted = true;
+        video.volume = 0;
+        video.currentTime = 0;
+        video.removeAttribute("src");
+
+        const sources = video.querySelectorAll("source");
+        sources.forEach(function (source) {
+          source.removeAttribute("src");
+        });
+
+        video.load();
+      } catch (error) {
+        // Aunque el navegador no permita alguna operación, continuamos.
+      }
+
+      soundButton.style.display = "none";
+      skipButton.style.display = "none";
+      intro.classList.add("hide");
+
+      /* Eliminar el video después de comenzar la transición. */
+      setTimeout(function () {
+        if (video && video.parentNode) {
+          video.remove();
+        }
+      }, 100);
+
+      setTimeout(function () {
+        intro.style.display = "none";
+        titleScreen.setAttribute("aria-hidden", "false");
+        titleScreen.classList.add("show");
+      }, 800);
+    }
+
+    video.addEventListener("ended", finishIntro);
+    skipButton.addEventListener("click", finishIntro);
+
+    /* Entrar al sitio */
+    enterButton.addEventListener("click", function () {
+      titleScreen.classList.remove("show");
+
+      setTimeout(function () {
+        titleScreen.style.display = "none";
+        home.classList.add("show");
+        document.body.style.overflow = "auto";
+      }, 800);
+    });
+  </script>
+</body>
+</html>
