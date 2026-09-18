@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000">
+  <title>-1 BUCLE</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #000;
+      color: #fff;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    body { overflow: hidden; }
+
+    /* =========================
+       INTRO / VIDEO
+       ========================= */
+    #intro {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity .8s ease, visibility .8s ease;
+    }
+
+    #intro.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    #teaser {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .intro-button {
+      position: absolute;
+      bottom: 20px;
+      z-index: 101;
+      padding: 11px 17px;
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 4px;
+      background: rgba(0,0,0,.72);
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .intro-button:hover,
+    .intro-button:focus {
+      background: rgba(255,255,255,.12);
+      border-color: #fff;
+      outline: none;
+    }
+
+    #sound { left: 20px; }
+    #skip { right: 20px; }
+
+    /* =========================
+       TITLE
+       ========================= */
+    #titleScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+      text-align: center;
+      background: radial-gradient(circle at center, #171022 0%, #050409 48%, #000 100%);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .8s ease, visibility .8s ease;
+    }
+
+    #titleScreen.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .title {
+      font-size: clamp(48px, 10vw, 120px);
+      letter-spacing: .16em;
+      margin-left: .16em;
+      text-shadow: 0 0 22px rgba(255,255,255,.25);
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: #aaa;
+      font-size: clamp(13px, 2vw, 20px);
+      letter-spacing: .3em;
+      text-transform: uppercase;
+    }
+
+    .enter {
+      margin-top: 42px;
+      padding: 13px 32px;
+      border: 1px solid #777;
+      background: transparent;
+      color: #fff;
+      font-family: inherit;
+      cursor: pointer;
+      letter-spacing: .2em;
+    }
+
+    .enter:hover,
+    .enter:focus {
+      border-color: #fff;
+      box-shadow: 0 0 20px rgba(255,255,255,.18);
+      outline: none;
+    }
+
+    /* =========================
+       HOME
+       ========================= */
+    #home {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow-y: auto;
+      background: linear-gradient(#08070c, #020204);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .8s ease, visibility .8s ease;
+    }
+
+    #home.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    header {
+      min-height: 55vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+      background: radial-gradient(circle, #17101e 0%, #08070c 55%, #020204 100%);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(44px, 8vw, 92px);
+      letter-spacing: .12em;
+    }
+
+    header p {
+      max-width: 680px;
+      color: #bdbdbd;
+      line-height: 1.7;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    nav a,
+    .action-link {
+      display: inline-block;
+      padding: 11px 18px;
+      border: 1px solid #444;
+      color: #fff;
+      text-decoration: none;
+      transition: .2s ease;
+    }
+
+    nav a:hover,
+    .action-link:hover {
+      border-color: #aaa;
+      background: rgba(255,255,255,.04);
+    }
+
+    section {
+      max-width: 900px;
+      margin: auto;
+      padding: 70px 22px;
+    }
+
+    section h2 {
+      margin-top: 0;
+      font-size: 30px;
+      letter-spacing: .08em;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 15px;
+    }
+
+    .card {
+      min-height: 130px;
+      padding: 24px;
+      border: 1px solid #29272e;
+      background: rgba(255,255,255,.025);
+    }
+
+    /* =========================
+       PDF / HISTORIA
+       ========================= */
+    .pdf-container {
+      width: 100%;
+      margin-top: 25px;
+    }
+
+    .pdf-viewer {
+      display: block;
+      width: 100%;
+      height: 78vh;
+      min-height: 520px;
+      border: 1px solid #29272e;
+      background: #111;
+    }
+
+    .pdf-fallback {
+      margin-top: 14px;
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    .action-link {
+      margin-top: 8px;
+    }
+
+    /* =========================
+       COMIC LINK
+       ========================= */
+    .comic-box {
+      padding: 25px;
+      border: 1px solid #29272e;
+      background: rgba(255,255,255,.025);
+    }
+
+    footer {
+      padding: 40px 20px 70px;
+      color: #666;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .intro-button {
+        bottom: 14px;
+      }
+
+      #sound { left: 14px; }
+      #skip { right: 14px; }
+
+      .title {
+        letter-spacing: .08em;
+        margin-left: .08em;
+      }
+
+      .subtitle {
+        letter-spacing: .16em;
+      }
+
+      .pdf-viewer {
+        height: 70vh;
+        min-height: 460px;
+      }
+    }
+
+    /* =========================
+       SOUL EATER — INSPIRED THEME
+       Black/white manga, asymmetry, rough ink, moon/sun motifs.
+       No external images or assets required.
+       ========================= */
+    body {
+      background: #050505;
+      color: #f4f1e8;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    #intro { background: #050505; }
+
+    #titleScreen {
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(255,255,255,.07) 0 2px, transparent 3px),
+        radial-gradient(circle at 82% 72%, rgba(255,255,255,.06) 0 2px, transparent 3px),
+        #050505;
+    }
+
+    #titleScreen::before,
+    #titleScreen::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Crescent-like graphic */
+    #titleScreen::before {
+      width: 210px;
+      height: 210px;
+      right: 7vw;
+      top: 8vh;
+      background: #f4f1e8;
+      box-shadow: 0 0 0 14px rgba(244,241,232,.08), 0 0 55px rgba(244,241,232,.12);
+    }
+
+    #titleScreen::after {
+      width: 175px;
+      height: 175px;
+      right: calc(7vw + 34px);
+      top: calc(8vh - 8px);
+      background: #050505;
+    }
+
+    .title {
+      position: relative;
+      z-index: 2;
+      font-weight: 900;
+      font-family: Impact, Haettenschweiler, "Arial Black", sans-serif;
+      font-size: clamp(52px, 11vw, 132px);
+      letter-spacing: .04em;
+      transform: rotate(-2deg);
+      text-shadow: 5px 5px 0 #1a1a1a, 9px 9px 0 rgba(244,241,232,.13);
+    }
+
+    .subtitle {
+      position: relative;
+      z-index: 2;
+      color: #d6d2c8;
+      font-family: Impact, Haettenschweiler, "Arial Black", sans-serif;
+      letter-spacing: .22em;
+      transform: rotate(1deg);
+    }
+
+    .enter {
+      position: relative;
+      z-index: 2;
+      border: 3px solid #f4f1e8;
+      color: #050505;
+      background: #f4f1e8;
+      font-family: Impact, Haettenschweiler, "Arial Black", sans-serif;
+      font-size: 17px;
+      letter-spacing: .12em;
+      transform: skew(-7deg) rotate(-1deg);
+      box-shadow: 7px 7px 0 #171717;
+    }
+
+    .enter:hover,
+    .enter:focus {
+      color: #f4f1e8;
+      background: #050505;
+      border-color: #f4f1e8;
+      box-shadow: 9px 9px 0 #f4f1e8;
+    }
+
+    #home {
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0, rgba(255,255,255,.018) 1px, transparent 1px, transparent 5px),
+        #080808;
+    }
+
+    header {
+      position: relative;
+      min-height: 62vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 78% 24%, rgba(255,255,255,.08) 0 7%, transparent 7.5%),
+        radial-gradient(circle at 78% 24%, transparent 0 10%, rgba(255,255,255,.06) 10.5% 11%, transparent 11.5%),
+        linear-gradient(135deg, #111 0%, #050505 55%, #0c0c0c 100%);
+      border-bottom: 5px solid #f4f1e8;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      width: 290px;
+      height: 290px;
+      left: -100px;
+      bottom: -135px;
+      border-radius: 50%;
+      background: #f4f1e8;
+      box-shadow: 0 0 0 18px #050505;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(105deg, transparent 0 35px, rgba(255,255,255,.025) 36px 38px, transparent 39px 75px);
+      mix-blend-mode: screen;
+    }
+
+    header h1,
+    header p,
+    nav { position: relative; z-index: 2; }
+
+    header h1 {
+      font-family: Impact, Haettenschweiler, "Arial Black", sans-serif;
+      font-size: clamp(52px, 10vw, 112px);
+      letter-spacing: .02em;
+      transform: rotate(-3deg) skew(-4deg);
+      text-shadow: 7px 7px 0 #000;
+    }
+
+    header p {
+      max-width: 650px;
+      color: #d0ccc3;
+      font-style: italic;
+      border-left: 4px solid #f4f1e8;
+      padding-left: 15px;
+      text-align: left;
+    }
+
+    nav { gap: 10px; }
+
+    nav a,
+    .action-link {
+      border: 2px solid #f4f1e8;
+      background: #0a0a0a;
+      color: #f4f1e8;
+      font-family: Impact, Haettenschweiler, "Arial Black", sans-serif;
+      letter-spacing: .08em;
+      transform: skew(-5deg);
+      box-shadow: 4px 4px 0 #f4f1e8;
+    }
+
+    nav a:nth-child(2n) { transform: skew(-5deg) rotate(1deg); }
+    nav a:nth-child(3n) { transform: skew(-5deg) rotate(-1deg); }
+
+    nav a:hover,
+    .action-link:hover {
+      background: #f4f1e8;
+      color: #050505;
+      border-color: #f4f1e8;
+      box-shadow: 5px 5px 0 #555;
+    }
+
+    section {
+      position: relative;
+      max-width: 980px;
+    }
+
+    section::before {
+      content: "";
+      display: block;
+      width: 58px;
+      height: 9px;
+      margin-bottom: 18px;
+      background: #f4f1e8;
+      transform: rotate(-3deg) skew(-20deg);
+      box-shadow: 8px 4px 0 #222;
+    }
+
+    section h2 {
+      font-family: Impact, Haettenschweiler, "Arial Black", sans-serif;
+      font-size: 34px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      transform: rotate(-1deg);
+    }
+
+    .card,
+    .comic-box {
+      border: 2px solid #f4f1e8;
+      background: #0b0b0b;
+      box-shadow: 6px 6px 0 #1b1b1b;
+      transform: rotate(-.6deg);
+    }
+
+    .card:nth-child(even) { transform: rotate(.7deg); }
+    .card strong { font-family: Impact, Haettenschweiler, "Arial Black", sans-serif; letter-spacing: .04em; }
+
+    .pdf-viewer { border: 2px solid #f4f1e8; box-shadow: 6px 6px 0 #1b1b1b; }
+
+    .comic-box { border-left: 7px solid #f4f1e8; }
+
+    footer {
+      font-family: Impact, Haettenschweiler, "Arial Black", sans-serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 600px) {
+      #titleScreen::before { width: 120px; height: 120px; right: -18px; top: 9vh; }
+      #titleScreen::after { width: 98px; height: 98px; right: -2px; top: calc(9vh + 4px); }
+      .title { font-size: clamp(48px, 15vw, 80px); }
+      header { min-height: 70vh; }
+      header::before { width: 180px; height: 180px; left: -80px; bottom: -90px; }
+      nav a, .action-link { box-shadow: 3px 3px 0 #f4f1e8; }
+      section { padding-left: 18px; padding-right: 18px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- =========================
+       INTRO
+       ========================= -->
+  <div id="intro" aria-label="Introducción">
+    <video id="teaser" autoplay muted playsinline preload="auto">
+      <source src="./teaser.mp4" type="video/mp4">
+      Tu navegador no puede reproducir este video.
+    </video>
+
+    <button id="sound" class="intro-button" type="button">
+      🔊 ACTIVAR SONIDO
+    </button>
+
+    <button id="skip" class="intro-button" type="button">
+      Saltar
+    </button>
+  </div>
+
+  <!-- =========================
+       TITLE
+       ========================= -->
+  <div id="titleScreen" aria-hidden="true">
+    <div class="title">-1 BUCLE</div>
+    <div class="subtitle">Una historia atrapada en el ciclo</div>
+    <button id="enter" class="enter" type="button">ENTRAR</button>
+  </div>
+
+  <!-- =========================
+       HOME
+       ========================= -->
+  <main id="home">
+    <header>
+      <h1>-1 BUCLE</h1>
+      <p>
+        Una historia de ciclos, universos y acontecimientos que quizá nunca debieron repetirse.
+      </p>
+
+      <nav aria-label="Navegación principal">
+        <a href="#historia">Historia</a>
+        <a href="#personajes">Personajes</a>
+        <a href="#universo">Universo</a>
+        <a href="#galeria">Galería</a>
+        <a href="./comic.html">📚 Cómic</a>
+      </nav>
+    </header>
+
+    <section id="historia">
+      <h2>📖 Historia</h2>
+      <p>Lee aquí el PDF de <strong>-1 BUCLE</strong>.</p>
+
+      <div class="pdf-container">
+        <iframe
+          class="pdf-viewer"
+          src="./bucle.pdf#view=FitH"
+          title="Historia -1 BUCLE">
+          Tu navegador no puede mostrar el PDF directamente.
+        </iframe>
+
+        <div class="pdf-fallback">
+          Si el visor no aparece correctamente en tu celular, abre el archivo directamente:<br>
+          <a class="action-link" href="./bucle.pdf" target="_blank" rel="noopener">
+            📖 ABRIR HISTORIA EN PDF
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="personajes">
+      <h2>👤 Personajes</h2>
+      <div class="cards">
+        <div class="card"><strong>Personaje 01</strong><br><br>Próximamente...</div>
+        <div class="card"><strong>Personaje 02</strong><br><br>Próximamente...</div>
+        <div class="card"><strong>Personaje 03</strong><br><br>Próximamente...</div>
+      </div>
+    </section>
+
+    <section id="universo">
+      <h2>🌌 Universo</h2>
+      <p>
+        Una sección para explicar el Bucle, los universos y el lore sin revelar demasiado.
+      </p>
+    </section>
+
+    <section id="galeria">
+      <h2>🖼️ Galería</h2>
+      <p>Aquí iremos colocando tus ilustraciones y arte promocional.</p>
+    </section>
+
+    <!-- El cómic permanece como página independiente -->
+    <section id="comic">
+      <h2>📚 Cómic</h2>
+      <div class="comic-box">
+        <p>
+          El cómic se mantiene separado de la historia en PDF.
+        </p>
+        <a class="action-link" href="./comic.html">📚 ABRIR CÓMIC</a>
+      </div>
+    </section>
+
+    <footer>© -1 BUCLE · Página oficial del proyecto</footer>
+  </main>
+
+  <script>
+    const intro = document.getElementById("intro");
+    const titleScreen = document.getElementById("titleScreen");
+    const home = document.getElementById("home");
+    const video = document.getElementById("teaser");
+    const soundButton = document.getElementById("sound");
+    const skipButton = document.getElementById("skip");
+    const enterButton = document.getElementById("enter");
+
+    let introFinished = false;
+
+    /* Activar sonido */
+    soundButton.addEventListener("click", async function () {
+      if (introFinished) return;
+
+      video.muted = false;
+      video.volume = 1;
+
+      try {
+        await video.play();
+        soundButton.style.display = "none";
+      } catch (error) {
+        video.controls = true;
+        soundButton.textContent = "▶️ REPRODUCIR CON SONIDO";
+      }
+    });
+
+    /*
+      Cierra la introducción y DETIENE COMPLETAMENTE el video.
+      El elemento <video> se elimina del DOM para evitar que el audio
+      pueda continuar reproduciéndose en segundo plano en el celular.
+    */
+    function finishIntro() {
+      if (introFinished) return;
+      introFinished = true;
+
+      try {
+        video.pause();
+        video.muted = true;
+        video.volume = 0;
+        video.currentTime = 0;
+        video.removeAttribute("src");
+
+        const sources = video.querySelectorAll("source");
+        sources.forEach(function (source) {
+          source.removeAttribute("src");
+        });
+
+        video.load();
+      } catch (error) {
+        // Aunque el navegador no permita alguna operación, continuamos.
+      }
+
+      soundButton.style.display = "none";
+      skipButton.style.display = "none";
+      intro.classList.add("hide");
+
+      /* Eliminar el video después de comenzar la transición. */
+      setTimeout(function () {
+        if (video && video.parentNode) {
+          video.remove();
+        }
+      }, 100);
+
+      setTimeout(function () {
+        intro.style.display = "none";
+        titleScreen.setAttribute("aria-hidden", "false");
+        titleScreen.classList.add("show");
+      }, 800);
+    }
+
+    video.addEventListener("ended", finishIntro);
+    skipButton.addEventListener("click", finishIntro);
+
+    /* Entrar al sitio */
+    enterButton.addEventListener("click", function () {
+      titleScreen.classList.remove("show");
+
+      setTimeout(function () {
+        titleScreen.style.display = "none";
+        home.classList.add("show");
+        document.body.style.overflow = "auto";
+      }, 800);
+    });
+  </script>
+</body>
+</html>
